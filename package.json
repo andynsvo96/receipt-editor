@@ -1,0 +1,110 @@
+{
+  "name": "receipt-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A private desktop workspace for editing HTML and MHTML receipts.",
+  "author": "Receipt Studio",
+  "main": "desktop/main.cjs",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "vinext dev",
+    "build": "vinext build",
+    "start": "vinext start",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern desktop-dist --ignore-pattern release --ignore-pattern .next",
+    "desktop:dev": "node desktop/dev.cjs",
+    "desktop:renderer:build": "vite build --config vite.desktop.config.ts",
+    "desktop:standalone": "npm run desktop:renderer:build && node desktop/build-standalone.cjs",
+    "desktop:portable": "npm run desktop:renderer:build && node desktop/build-standalone.cjs && node desktop/build.cjs",
+    "desktop:build": "npm run desktop:renderer:build && node desktop/build.cjs",
+    "desktop:build:win": "npm run desktop:renderer:build && node desktop/build.cjs --win",
+    "desktop:build:mac": "npm run desktop:renderer:build && node desktop/build.cjs --mac"
+  },
+  "dependencies": {
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.37.1",
+    "@cloudflare/workers-types": "4.20260515.1",
+    "@openai/sites-vite-plugin": "^0.1.0 || ^0.2.0",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "react-server-dom-webpack": "19.2.6",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vinext": "1.0.0-beta.3",
+    "vite": "8.0.13",
+    "wrangler": "4.92.0"
+  },
+  "type": "module",
+  "build": {
+    "appId": "com.receiptstudio.app",
+    "productName": "Receipt Studio",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "files": [
+      "desktop/main.cjs",
+      "desktop/preload.cjs",
+      "desktop-dist/**/*",
+      "package.json"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "html",
+          "htm",
+          "mhtml",
+          "mht"
+        ],
+        "name": "Receipt document",
+        "role": "Editor"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "Receipt-Studio-Portable-Windows.${ext}",
+      "requestExecutionLevel": "user",
+      "unpackDirName": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "artifactName": "Receipt-Studio-Portable-Mac.${ext}",
+      "sign": false
+    }
+  }
+}
